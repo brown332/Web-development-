@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.myhealthbuddy2.twa",
+        "sha256_cert_fingerprints": ["17:A8:52:35:30:E5:27:DC:64:44:3F:05:F4:B6:B6:9E:45:1E:39:44:DC:27:63:B5:B1:CE:6D:F3:71:A1:0E:91"]
+      }
+    }]

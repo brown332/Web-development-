@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Health Buddy</title>
+    <!-- Added PWA manifest and theme color -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Health Buddy">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Authentication Section -->
+        <div id="auth-section">
+            <div class="auth-container">
+                <h1>🏥 My Health Buddy</h1>
+                <p>Your personal health companion</p>
+                
+                <div class="auth-form">
+                    <div id="login-form">
+                        <h2>Welcome Back!</h2>
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button class="btn" onclick="login()">Login</button>
+                        <button class="btn btn-secondary" onclick="showRegister()">Create Account</button>
+                        <div id="login-error" class="error"></div>
+                    </div>
+                    
+                    <div id="register-form" class="hidden">
+                        <h2>Create Account</h2>
+                        <div class="form-group">
+                            <label for="register-name">Full Name</label>
+                            <input type="text" id="register-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <button class="btn" onclick="register()">Create Account</button>
+                        <button class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
+                        <div id="register-error" class="error"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App Section -->
+        <div id="app-section" class="hidden">
+            <div class="header">
+                <h1>🏥 My Health Buddy</h1>
+                <div class="user-info">Welcome, <span id="user-name"></span>!</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section active">
+                    <h2>Dashboard</h2>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="diary-count">0</div>
+                            <div class="stat-label">Health Notes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="water-today">0</div>
+                            <div class="stat-label">Glasses Today</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Today's Water Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dashboard-water-progress"></div>
+                        </div>
+                        <p id="dashboard-water-text">0 / 8 glasses</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Recent Health Notes</h3>
+                        <div id="recent-notes">No notes yet. Start tracking your health!</div>
+                    </div>
+                </div>
+
+                <!-- Health Diary Section -->
+                <div id="diary-section" class="section">
+                    <h2>Health Diary</h2>
+                    
+                    <div class="card">
+                        <h3 id="diary-form-title">Add New Entry</h3>
+                        <div class="form-group">
+                            <label for="diary-title">Title</label>
+                            <input type="text" id="diary-title" placeholder="e.g., Morning checkup">
+                        </div>
+                        <div class="form-group">
+                            <label for="diary-content">Notes</label>
+                            <textarea id="diary-content" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; resize: vertical;" placeholder="How are you feeling today?"></textarea>
+                        </div>
+                        <button class="btn" onclick="saveDiaryEntry()">Save Entry</button>
+                        <button class="btn btn-secondary hidden" id="cancel-edit-btn" onclick="cancelDiaryEdit()">Cancel</button>
+                    </div>
+                    
+                    <div id="diary-entries"></div>
+                </div>
+
+                <!-- Water Tracker Section -->
+                <div id="water-section" class="section">
+                    <h2>Water Intake Coach</h2>
+                    
+                    <div class="card">
+                        <h3>Daily Goal</h3>
+                        <div class="form-group">
+                            <label for="water-goal">Glasses per day</label>
+                            <input type="number" id="water-goal" min="1" max="20" value="8">
+                        </div>
+                        <button class="btn btn-small" onclick="updateWaterGoal()">Update Goal</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Today's Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="water-progress"></div>
+                        </div>
+                        <p id="water-progress-text">0 / 8 glasses</p>
+                        
+                        <div class="water-controls">
+                            <button class="btn btn-small" onclick="removeWater()">-</button>
+                            <div class="water-count" id="water-count">0</div>
+                            <button class="btn btn-small" onclick="addWater()">+</button>
+                        </div>
+                        
+                        <button class="btn btn-secondary" onclick="resetWaterToday()">Reset Today</button>
+                    </div>
+                </div>
+
+                <!-- Meal Planner Section -->
+                <div id="meals-section" class="section">
+                    <h2>Meal Planner</h2>
+                    
+                    <div class="card">
+                        <h3 id="meal-form-title">Add New Meal</h3>
+                        <div class="form-group">
+                            <label for="meal-day">Day</label>
+                            <select id="meal-day" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-type">Meal Type</label>
+                            <select id="meal-type" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Snack">Snack</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-name">Meal Name</label>
+                            <input type="text" id="meal-name" placeholder="e.g., Grilled Chicken Salad">
+                        </div>
+                        <button class="btn" onclick="saveMeal()">Save Meal</button>
+                        <button class="btn btn-secondary hidden" id="cancel-meal-edit-btn" onclick="cancelMealEdit()">Cancel</button>
+                    </div>
+                    
+                    <div id="meal-plan"></div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-item active" onclick="showSection('dashboard')">🏠 Home</button>
+                <button class="nav-item" onclick="showSection('diary')">📝 Diary</button>
+                <button class="nav-item" onclick="showSection('water')">💧 Water</button>
+                <button class="nav-item" onclick="showSection('meals')">🍽️ Meals</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <!-- Added service worker registration -->
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
